@@ -1,9 +1,9 @@
+import Layout from '../components/template/Layout'
+
 export default function Home() {
   return (
-    <div className="bg-gradient-to-r from-green-500 to-blue-500">
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </div>
+    <Layout titulo="Página Inicial" subtitulo="Estamos construindo um template Admin!" >
+      <h3>Conteudo</h3>
+    </Layout>
   )
 }
