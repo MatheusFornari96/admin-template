@@ -1,19 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 import AuthInput from "../components/auth/AuthInput";
-import { GoogleIcon } from "../components/icons/index";
+import { GoogleIcon, WarningIcon } from "../components/icons/index";
 
 export default function Autenticacao() {
-
+  const [error, setError] = useState(null);
   const [modo, setModo] = useState<'login' | 'cadastro'>('login');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
+  function exibirError(msg, tempoEmSegundos = 3) {
+    setError(msg);
+    setTimeout(() => setError(null), tempoEmSegundos * 1000);
+  }
+
   function submeter() {
     if (modo === 'login') {
       console.log('login');
+      exibirError('Ocorreu um erro no login!');
     } else {
       console.log('cadastrar');
+      exibirError('Ocorreu um erro no cadastro!');
     }
   }
 
@@ -30,6 +37,19 @@ export default function Autenticacao() {
         <h1 className={` text-3xl font-bold mb-5`}>
           {modo === 'login' ? 'Entre com a sua conta' : 'Cadastre-se na Plataforma'}
         </h1>
+
+        {/* div de erro tela de login */}
+        {error && (
+          <div className={`
+        flex items-center
+        bg-red-400 text-white py-3 px-5 my-2
+        border border-red-700 rounded-lg
+        `}>
+            {WarningIcon()}
+            <span className="ml-3">{error}</span>
+          </div>
+        )}
+
         <AuthInput
           label="Email"
           tipo="email"
@@ -67,7 +87,7 @@ export default function Autenticacao() {
             Novo por aqui?
             <a onClick={() => setModo('cadastro')}
               className={`text-blue-500 hover:text-blue-700 font-semibold
-            cursor:pointer 
+            cursor-pointer 
             `}
             > Crie uma conta gratuitamente</a>
           </p>
@@ -76,7 +96,7 @@ export default function Autenticacao() {
             Já faz parte da nossa comunidade?
             <a onClick={() => setModo('cadastro')}
               className={`text-blue-500 hover:text-blue-700 font-semibold
-            cursor:pointer 
+              cursor-pointer 
             `}
             > Entre com a suas credenciais</a>
           </p>
