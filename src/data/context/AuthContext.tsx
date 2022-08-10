@@ -7,6 +7,7 @@ import Usuario from '../../model/Usuario'
 interface AuthContextProps {
   usuario?: Usuario
   loginGoogle?: () => Promise<void>
+  logout?: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextProps>({})
@@ -53,23 +54,41 @@ export function AuthProvider(props) {
   }
 
   async function loginGoogle() {
-    const resp = await firebase.auth().signInWithPopup(
-      new firebase.auth.GoogleAuthProvider()
-    )
+    try {
+      setLoad(true);
+      const resp = await firebase.auth().signInWithPopup(
+        new firebase.auth.GoogleAuthProvider()
+      )
 
-    configurarSessao(resp.user)
-    route.push('/');
+      configurarSessao(resp.user)
+      route.push('/');
+    } finally {
+      setLoad(false);
+    }
+  }
+
+  async function logout() {
+    try {
+      setLoad(true);
+      await firebase.auth().signOut();
+      await configurarSessao(null);
+    } finally {
+      setLoad(false);
+    }
   }
 
   useEffect(() => {
-    const cancel = firebase.auth().onIdTokenChanged(configurarSessao)
-    return () => cancel()
+    if (Cookies.get('admin-template-fornari-auth')) {
+      const cancel = firebase.auth().onIdTokenChanged(configurarSessao)
+      return () => cancel()
+    }
   }, [])
 
   return (
     <AuthContext.Provider value={{
       usuario,
-      loginGoogle
+      loginGoogle,
+      logout
     }}>
       {props.children}
     </AuthContext.Provider>
